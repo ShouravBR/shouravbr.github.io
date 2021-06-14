@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>ShouravBR - Tutorial</title><link href="https://shouravbr.github.io/" rel="alternate"></link><link href="https://shouravbr.github.io/feeds/tutorial.atom.xml" rel="self"></link><id>https://shouravbr.github.io/</id><updated>2021-06-15T00:11:51+06:00</updated><entry><title>Introduction to Python Multiprocessing Pool</title><link href="https://shouravbr.github.io/introduction-to-python-multiprocessing-pool.html" rel="alternate"></link><published>2021-06-15T00:11:51+06:00</published><updated>2021-06-15T00:11:51+06:00</updated><author><name>Shourav Bin Rabbani</name></author><id>tag:shouravbr.github.io,2021-06-15:/introduction-to-python-multiprocessing-pool.html</id><content type="html">&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Hello, World!&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Hello, World!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Tutorial"></category></entry></feed>
