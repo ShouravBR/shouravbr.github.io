@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-    <title>ShouravBR - Parallelism with multiprocessing `Pool`</title>
+    <title>ShouravBR - Parallelism with multiprocessing Pool</title>
 
 
 
@@ -51,21 +51,14 @@
   <article>
     <header>
       <h2 class="entry-title">
-        Parallelism with multiprocessing `Pool`
+        Parallelism with multiprocessing Pool
       </h2>
-      
     </header>
     <footer class="post-info">
       <div>
-        Posted on 
-        <time class="published" datetime="2021-06-16T23:49:52.526928+06:00">
-          <a href="/parallelism-with-multiprocessing-pool.html" rel="bookmark" title="Permalink to Parallelism with multiprocessing `Pool`">
-            Wed 16 June 2021
-          </a>
-        </time>
-          last updated:
-          <time class="modified" datetime="2021-06-16T23:49:52.526928+06:00">
-            Wed 16 June 2021
+          Last updated 
+          <time class="modified" datetime="2021-06-17T04:39:22.120345+06:00">
+            Thu 17 June 2021
           </time>
       </div>
       
@@ -78,8 +71,8 @@
       </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing process makes it easy for users to achieve parallelism. The basic usage can be found on the official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. In this post, we implement the multiprocessing pool in a module and use it in our "main" function. </p>
-<p>We create the class, say "ShadowCloneJutsu", which uses the multiprocessings library and will run the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] parallelly. Next, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. Alternative to this can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the script as "jutsus.py"</p>
+      <p>The multiprocessing <code>Pool</code> class makes it easy for users parallelism. The basic usage can be found on the official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. In this post, we implement the multiprocessing pool in a module and use it from our "main" function. </p>
+<p>We create the class called "ShadowCloneJutsu", which uses the multiprocessings library and will run the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] parallelly. Next, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. Alternative to this can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the script as "jutsus.py"</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as jutsus.py</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
@@ -101,8 +94,8 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Now, we import our module and run <code>cast</code> function. However, we can not hastily run this function without checking the name of the scope which is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone, let us call them child processes, and reexcute the main process. This means, the child processes will also run the <code>cast</code> function and clone recursively unless we check the scope. The child process will not be in <code>'__main__'</code> scope. And, checking the main scope is a good practice [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
-<p>Here is the final code and output.</p>
+<p>Now, we import our module, create an instance and run its member function <code>cast</code>. However, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>jutsu.cast</code> line and clone themselves unless we check the scope. The child process will not be in <code>'__main__'</code> scope. With that said, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
+<p>Here is the final code and output:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jutsus</span> <span class="kn">import</span> <span class="n">ShadowCloneJutsu</span>
 
 <span class="n">jutsu</span> <span class="o">=</span> <span class="n">ShadowCloneJutsu</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
@@ -121,14 +114,20 @@
 </section>
 
     <footer id="contentinfo" class="body">
+
+<link rel="stylesheet"
+href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+<script>
+    hljs.configure({
+        languages: ['python','json','javascript']
+    });
+    hljs.highlightAll();
+</script>
             <address id="about" class="vcard body">
             Site generated with <a href="https://getpelican.com/">Pelican</a>.
             </address><!-- /#about -->
     </footer><!-- /#contentinfo -->
-    <link rel="stylesheet"
-    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
-    <script>hljs.highlightAll();</script>
 </body>
 
 </html>
