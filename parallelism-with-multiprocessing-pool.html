@@ -1,0 +1,134 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <title>ShouravBR - Parallelism with multiprocessing `Pool`</title>
+
+
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- <link rel="stylesheet" href="/static/css/github-pandoc.css"> -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    
+    <link rel="stylesheet" href="/static/css/main.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-40269231-7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-40269231-7');
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="generator" content="Pelican" />
+
+    
+</head>
+
+<body>
+
+    <nav class="monospace">
+        <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/notebook.html">Notebook</a></li>
+
+
+        </ul>
+    </nav>
+
+
+<section id="content" class="body">
+  <article>
+    <header>
+      <h2 class="entry-title">
+        Parallelism with multiprocessing `Pool`
+      </h2>
+      
+    </header>
+    <footer class="post-info">
+      <div>
+        Posted on 
+        <time class="published" datetime="2021-06-16T23:34:54.060591+06:00">
+          <a href="/parallelism-with-multiprocessing-pool.html" rel="bookmark" title="Permalink to Parallelism with multiprocessing `Pool`">
+            Wed 16 June 2021
+          </a>
+        </time>
+          last updated:
+          <time class="modified" datetime="2021-06-16T23:34:54.060591+06:00">
+            Wed 16 June 2021
+          </time>
+      </div>
+      
+      <!--       <address class="vcard author">
+        By         <a class="url fn" href="/author/shourav-bin-rabbani.html">Shourav Bin Rabbani</a>
+      </address>
+ -->
+      <div class="category">
+        Category: <a href="/category/python.html">Python</a>
+      </div>
+    </footer><!-- /.post-info -->
+    <div class="entry-content">
+      <p>The multiprocessing process makes it easy for users to achieve parallelism. The basic usage can be found on the official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. In this post, I implement the multiprocessing pool in a module and use it in our "main" function. </p>
+<p>Lets create our class, say "ShadowCloneJutsu", who uses the multiprocessings library and will run the <code>@staticmethod</code>[<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] parallelly. Let's save it as "jutsus.py". We use <code>Pool.imap_unordered</code> since the order of output does not matter to and we can process the output as soon as it is available.  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">## saved as jutsus.py</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="k">class</span> <span class="nc">ShadowCloneJutsu</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_tasks</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span> <span class="o">=</span> <span class="n">list_of_tasks</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; returns square of number &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_clones</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">number_of_clones</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">individual_result</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span>
+                <span class="n">ShadowCloneJutsu</span><span class="o">.</span><span class="n">square</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span>
+                <span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now, we import our module and run <code>cast</code> function. However, we can not hastily run this function without checking the name of the scope which is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone, let us call them child processes, and reexcute the main process. This means, the child processes will also run the <code>cast</code> function and clone recursively unless we check the scope. The child process will not be in <code>'__main__'</code> scope.</p>
+<p>Here is the final code and output.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jutsus</span> <span class="kn">import</span> <span class="n">ShadowCloneJutsu</span>
+
+<span class="n">jutsu</span> <span class="o">=</span> <span class="n">ShadowCloneJutsu</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">jutsu</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="mf">1</span>
+<span class="mf">4</span>
+<span class="mf">9</span>
+<span class="mf">16</span>
+</code></pre></div>
+    </div><!-- /.entry-content -->
+  </article>
+</section>
+
+    <footer id="contentinfo" class="body">
+            <address id="about" class="vcard body">
+            Site generated with <a href="https://getpelican.com/">Pelican</a>.
+            </address><!-- /#about -->
+    </footer><!-- /#contentinfo -->
+    <link rel="stylesheet"
+    href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+
+</html>
