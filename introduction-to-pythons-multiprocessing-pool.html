@@ -57,7 +57,7 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-03T13:47:12.317927+06:00">
+          <time class="modified" datetime="2022-03-03T13:55:22.698079+06:00">
             Thu 03 March 2022
           </time>
       </div>
@@ -92,7 +92,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Now, we import our module, create an instance and run its member function <code>cast</code>. However, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>jutsu.cast</code> line and clone themselves unless we check the scope. The child process will not be in <code>'__main__'</code> scope. With that said, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
+<p>Now, we import our module, create an instance and run its member function <code>cast</code>. However, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>workers.run</code> line and clone themselves unless a conditional statment prevents them. During scope checking, the child process's <code>__name__</code> will not be in <code>'__main__'</code> scope and hence our code will only create new processes only once. In addition, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
 <p>Here is the final code and output:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">workers</span> <span class="kn">import</span> <span class="n">Workers</span>
 
