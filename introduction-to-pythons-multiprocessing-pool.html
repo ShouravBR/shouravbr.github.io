@@ -57,7 +57,7 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-03T15:02:13.982905+06:00">
+          <time class="modified" datetime="2022-03-03T15:06:07.207588+06:00">
             Thu 03 March 2022
           </time>
       </div>
@@ -72,8 +72,8 @@
     </footer><!-- /.post-info -->
     <div class="entry-content">
       <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. The official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a> is an excellent source that everyone should check for more details. In this post, we implement a few basic uses of multiprocessing pool as a module and use it from our "main" function.</p>
-<h3>Use 1: Distributing the same work across a pool</h3>
-<p>Suppose, we have to run a function, for example, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <code>N</code>. However, <code>N</code> is large and executing it sequentially will take <code>T</code> time, which is large. Thankfully, you use a modern computer with multi-core processor. So you can evaluate the function for element in parallel.</p>
+<h3>Use 1: Distributing work across a pool</h3>
+<p>Suppose, we have to run a function, for example, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <code>N</code>. However, <code>N</code> is large and executing it sequentially will take <code>T</code> time, which is large. Thankfully, you use a modern computer with multi-core processor. So you can run the function for the array in parallel.</p>
 <p>For that, we first write a class called "Workers", which uses the multiprocessings library and store the function we need to run in parallel as the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>]. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. There are, however, many different methods in the <code>Pool</code> class for different type of management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
