@@ -57,7 +57,7 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-03T13:43:54.210917+06:00">
+          <time class="modified" datetime="2022-03-03T13:47:12.317927+06:00">
             Thu 03 March 2022
           </time>
       </div>
@@ -87,7 +87,8 @@
 
     <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_of_parallel_workers</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">no_of_parallel_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">individual_result</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">Workers</span><span class="o">.</span><span class="n">square</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span><span class="p">):</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">Workers</span><span class="o">.</span><span class="n">square</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">individual_result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
 </code></pre></div>
 
