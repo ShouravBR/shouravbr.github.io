@@ -57,8 +57,8 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2021-06-19T02:06:21.135413+06:00">
-            Sat 19 June 2021
+          <time class="modified" datetime="2022-03-03T13:42:37.774143+06:00">
+            Thu 03 March 2022
           </time>
       </div>
       
@@ -71,12 +71,12 @@
       </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing <code>Pool</code> class makes it easy for users parallelism. The basic usage can be found on the official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. In this post, we implement the multiprocessing pool in a module and use it from our "main" function. </p>
-<p>We create the class called "ShadowCloneJutsu", which uses the multiprocessings library and will run the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] parallelly. Next, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. Alternative to this can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the script as "jutsus.py"</p>
-<div class="highlight"><pre><span></span><code><span class="c1">## saved as jutsus.py</span>
+      <p>The multiprocessing <code>Pool</code> class makes it easy for users to achieve parallelism in their programs. The official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a> is an excellent source that everyone should check for more details. In this post, we implement the following basic uses of multiprocessing pool as a module and use it from our "main" function.</p>
+<p>We create the class called "Workers", which uses the multiprocessings library and will run the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] parallelly. Next, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. There are, however, many different methods in the <code>Pool</code> class for different type of management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save it as "Worker.py"</p>
+<div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
-<span class="k">class</span> <span class="nc">ShadowCloneJutsu</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">Workers</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">list_of_tasks</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span> <span class="o">=</span> <span class="n">list_of_tasks</span>
 
@@ -85,23 +85,22 @@
         <span class="sd">&#39;&#39;&#39; returns square of number &#39;&#39;&#39;</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
 
-    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_clones</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">number_of_clones</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">individual_result</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span>
-                <span class="n">ShadowCloneJutsu</span><span class="o">.</span><span class="n">square</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span>
-                <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">no_of_parallel_workers</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">Pool</span><span class="p">(</span><span class="n">no_of_parallel_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">individual_result</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">Workers</span><span class="o">.</span><span class="n">square</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_of_tasks</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Now, we import our module, create an instance and run its member function <code>cast</code>. However, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then run <code>cast</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>jutsu.cast</code> line and clone themselves unless we check the scope. The child process will not be in <code>'__main__'</code> scope. With that said, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
 <p>Here is the final code and output:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">jutsus</span> <span class="kn">import</span> <span class="n">ShadowCloneJutsu</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">workers</span> <span class="kn">import</span> <span class="n">Workers</span>
 
-<span class="n">jutsu</span> <span class="o">=</span> <span class="n">ShadowCloneJutsu</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">numbers_to_square</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">workers</span> <span class="o">=</span> <span class="n">Workers</span><span class="p">(</span><span class="n">numbers_to_square</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">jutsu</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># use two parallel worker to get the square of numbers</span>
+    <span class="n">workers</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> 
 </code></pre></div>
 
 <div class="highlight"><pre><span></span><code><span class="mf">1</span>
