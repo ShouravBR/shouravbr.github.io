@@ -57,7 +57,7 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-03T14:24:46.291252+06:00">
+          <time class="modified" datetime="2022-03-03T15:02:13.982905+06:00">
             Thu 03 March 2022
           </time>
       </div>
@@ -73,7 +73,7 @@
     <div class="entry-content">
       <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. The official Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a> is an excellent source that everyone should check for more details. In this post, we implement a few basic uses of multiprocessing pool as a module and use it from our "main" function.</p>
 <h3>Use 1: Distributing the same work across a pool</h3>
-<p>Suppose, we have to run a function, for example, get the squares ($f(x) = x^2)$, for every elements in an array of length <code>N</code>. However, <code>N</code> is large and executing it sequentially will take <code>T</code> time, which is large. Thankfully, you use a modern computer with multi-core processor. So you can evaluate the function for element in parallel.</p>
+<p>Suppose, we have to run a function, for example, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <code>N</code>. However, <code>N</code> is large and executing it sequentially will take <code>T</code> time, which is large. Thankfully, you use a modern computer with multi-core processor. So you can evaluate the function for element in parallel.</p>
 <p>For that, we first write a class called "Workers", which uses the multiprocessings library and store the function we need to run in parallel as the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>]. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. There are, however, many different methods in the <code>Pool</code> class for different type of management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
@@ -112,6 +112,69 @@
 <span class="mf">9</span>
 <span class="mf">16</span>
 </code></pre></div>
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
     </div><!-- /.entry-content -->
   </article>
 </section>
