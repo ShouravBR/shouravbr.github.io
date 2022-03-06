@@ -57,8 +57,8 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-03T15:25:17.979632+06:00">
-            Thu 03 March 2022
+          <time class="modified" datetime="2022-03-07T00:25:00.282546+06:00">
+            Mon 07 March 2022
           </time>
       </div>
       
@@ -71,9 +71,9 @@
       </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. While there are many use cases we can use the <code>Pool</code> class for, perhaps the most common is distributing work. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function.</p>
-<p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you use a modern computer with multi-core processor, say 4 cores, and so you can run the function in parallel essentially dropping the time taken by <span class="math">\(T/4\)</span> (give or take).</p>
-<p>For that, we first write a class called "Workers", which uses the multiprocessings library and store the function we need to run in parallel as the <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>]. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. There are, however, many different methods in the <code>Pool</code> class for different type of management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
+      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. While there are many use cases we can use the <code>Pool</code> class for, perhaps the most common, distributing work. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function.</p>
+<p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by <span class="math">\(T/2\)</span> (give or take).</p>
+<p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.map</code>. With that said, there are other methods in the <code>Pool</code> class for different type of pool management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
