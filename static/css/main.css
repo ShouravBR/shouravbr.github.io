@@ -131,9 +131,10 @@ a:hover{
 footer#contentinfo, section{
   /* color: #333; */
   font-size: 16px;
+  line-height: 28px;
   margin: 0 auto;
   margin-top: 1em;
-  max-width: 680px;
+  max-width: 960px;
   padding: 5px;
 }
 
