@@ -27,8 +27,17 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-40269231-7');
+        
     </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BFV2FR4WN"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
+    gtag('config', 'G-4BFV2FR4WN');
+    </script>
     <meta charset="utf-8" />
     <meta name="generator" content="Pelican" />
 
@@ -57,8 +66,8 @@
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-03-07T00:29:32.454634+06:00">
-            Mon 07 March 2022
+          <time class="modified" datetime="2022-04-26T01:20:44.863616+06:00">
+            Tue 26 April 2022
           </time>
       </div>
       
@@ -71,7 +80,7 @@
       </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. While there are many use cases we can use the <code>Pool</code> class for, perhaps the most common, distributing work. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function.</p>
+      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. While there are many use cases we can use the <code>Pool</code> class for, perhaps the most common case is, distributing work. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function.</p>
 <p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by <span class="math">\(T/2\)</span> (give or take).</p>
 <p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.map</code>. With that said, there are other methods in the <code>Pool</code> class for different type of pool management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
