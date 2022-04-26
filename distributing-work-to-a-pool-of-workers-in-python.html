@@ -2,7 +2,7 @@
 <html class="no-js" lang="en">
 
 <head>
-    <title>ShouravBR - Use Python's multiprocessing Pool to distribute work equally</title>
+    <title>ShouravBR - Distributing work to a Pool of workers in Python</title>
 
 
 
@@ -60,13 +60,13 @@
   <article>
     <header>
       <h2 class="entry-title">
-        Use Python's multiprocessing Pool to distribute work equally
+        Distributing work to a Pool of workers in Python
       </h2>
     </header>
     <footer class="post-info">
       <div>
           Last updated 
-          <time class="modified" datetime="2022-04-26T11:10:26.629219+06:00">
+          <time class="modified" datetime="2022-04-26T11:28:11.566222+06:00">
             Tue 26 April 2022
           </time>
       </div>
@@ -80,9 +80,9 @@
       </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. While there are many use cases we can use the <code>Pool</code> class for, perhaps the most common case is, distributing work equally. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function.</p>
+      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. The <code>Pool</code> class manages your worker process and makes it easy distribute workload. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function. But you can just implement it without classes as shown the Python documentation. </p>
 <p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by <span class="math">\(T/2\)</span> (give or take).</p>
-<p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.map</code>. With that said, there are other methods in the <code>Pool</code> class for different type of pool management. These can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
+<p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.imap</code>. In cases where we want to store the return values and handle them later, we will use <code>Pool.map</code>. There are many methods provided in the <code>Pool</code> class for different type of management and can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
@@ -103,7 +103,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="n">individual_result</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Now, we import our module, create an instance of <code>Workers</code> and call the public function <code>run</code> within a condition. That is, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> global variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> and then call <code>workers.run()</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>workers.run</code> line and clone themselves unless a conditional statment prevents them. During scope checking, the child process's <code>__name__</code> will not be in <code>'__main__'</code> scope and hence our code will only create new processes only once. In addition, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
+<p>Now, we import our module, create an instance of <code>Workers</code> and call the public function <code>run</code> within a condition. That is, we should not hastily run this function without checking the name of the scope. The scope is stored in the <code>__name__</code> global variable [<a href="https://docs.python.org/3/library/__main__.html">3</a>]. We must check if <code>__name__</code> is equal to <code>'__main__'</code> (that is, we are in the main scope) and then call <code>workers.run()</code>. This is because, on Windows, the multiprocessing library will clone the main process and create as many child processes as specified. Each of these child processes will go through the same lines of code, eventually reaching the <code>workers.run</code> line and clone themselves unless a conditional statment prevents them. During scope checking, the child process's <code>__name__</code> will not be in <code>'__main__'</code> scope and hence our code will only create new processes in the main scope. In addition, checking the main scope is a good way to deny any unwanted code execution during module imports [<a href="https://stackoverflow.com/questions/419163/what-does-if-name-main-do">4</a>].</p>
 <p>Here is the final code and output:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">workers</span> <span class="kn">import</span> <span class="n">Workers</span>
 
