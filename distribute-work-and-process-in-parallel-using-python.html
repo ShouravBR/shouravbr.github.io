@@ -2,10 +2,12 @@
 <html class="no-js" lang="en">
 
 <head>
-    <title>ShouravBR - Distributing work to a Pool of workers in Python</title>
+    <title>Distribute work and process in parallel using Python
+</title>
 
 
 
+<meta name="tags" content="Python" />
 
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -40,8 +42,6 @@
     </script>
     <meta charset="utf-8" />
     <meta name="generator" content="Pelican" />
-
-    
 </head>
 
 <body>
@@ -60,15 +60,20 @@
   <article>
     <header>
       <h2 class="entry-title">
-        Distributing work to a Pool of workers in Python
+        Distribute work and process in parallel using Python
       </h2>
     </header>
     <footer class="post-info">
       <div>
-          Last updated 
-          <time class="modified" datetime="2022-05-04T12:08:54.208841+06:00">
+        Posted on 
+        <time class="published" datetime="2021-06-12T09:00:00+06:00">
+          <!-- <a href="/distribute-work-and-process-in-parallel-using-python.html" rel="bookmark" title="Permalink to Distribute work and process in parallel using Python">link</a> -->
+            Sat 12 June 2021
+        </time>
+          (Last updated: 
+          <time class="modified" datetime="2022-05-04T13:20:18.334214+06:00">
             Wed 04 May 2022
-          </time>
+          </time>)           
       </div>
       
       <!--       <address class="vcard author">
@@ -78,9 +83,13 @@
       <div class="category">
         Category: <a href="/category/programming.html">Programming</a>
       </div>
+      <div class="tags">
+        Tags:
+        <a href="/tag/python.html">Python</a>
+      </div>
     </footer><!-- /.post-info -->
     <div class="entry-content">
-      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. The <code>Pool</code> class manages your worker process and makes it easy distribute workload. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function. But you can just implement it without classes as shown the Python documentation. </p>
+      <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. The <code>Pool</code> class manages your worker process and makes it easy distribute workload. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function. But you can just implement it without classes as shown in the Python documentation. </p>
 <p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by <span class="math">\(T/2\)</span> (give or take).</p>
 <p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.imap</code>. In cases where we want to store the return values and handle them later, we will use <code>Pool.map</code>. There are many methods provided in the <code>Pool</code> class for different type of management and can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
