@@ -72,8 +72,8 @@
             Fri 03 June 2022
         </time>
           (Last updated: 
-          <time class="modified" datetime="2022-06-03T13:36:57.343516+06:00">
-            Fri 03 June 2022
+          <time class="modified" datetime="2022-06-04T03:45:05.678319+06:00">
+            Sat 04 June 2022
           </time>)           
       </div>
       
@@ -101,6 +101,7 @@
 <span class="p">}</span>
 
 <span class="c1">// returns 5 after 1s of local work</span>
+<span class="c1">// we will run this with await to simulate synchronous execution</span>
 <span class="k">async</span> <span class="kd">function</span> <span class="nx">localWork</span><span class="p">(){</span>
     <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span> <span class="p">=&gt;</span> <span class="nx">setTimeout</span><span class="p">(()=&gt;{</span><span class="nx">resolve</span><span class="p">(</span><span class="mf">5</span><span class="p">)},</span> <span class="mf">1000</span><span class="p">));</span>
 <span class="p">}</span>
@@ -140,7 +141,7 @@
 <code>return value: 8</code>  </p>
 <p>Yes, your intuitions are correct, <code>earlyAwait()</code> will take about 3 seconds to finish whereas <code>laterAwait()</code> will take about 2 seconds. And you know why too.  For <code>earlyAwait()</code>, the program is waiting for the remote work to finish before starting the local work. On the other hand, in <code>laterAwait()</code>, the program only awaits for remote work to finish after finishing local work. This is possible because <code>async</code> functions return pending promises before they are resolved or rejected and we can put <code>await</code> on pending promises.</p>
 <p>With that said, some programs may depend on a lot of remote work and writing await for each is just unacceptable. So we just use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">Promise.all</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled">Promise.allSettled</a>. Both of these take a list of pending promises and return a pending promise that is resolved when the list of pending promises are resolved. With that said, <code>Promise.all</code> will return a reject object when any of promises in its list returns a <code>reject</code> object whereas <code>Promise.allSettled</code> will wait for all promises to either <code>resolve</code> or <code>reject</code> before resolving.</p>
-<p>This works well for remote work and things that are evaluated asynchronously like reading from disk. But we must be attentive of what resource each function uses. No doubt, both functions use CPU time but the remote work (whose implementation I skipped and instead put a waiting code) will use network resources. At some point, if we use too much of any resource, our program will slow down as well as other processes. For example, reading multiple files from disk concurrently will take more time because of <a href="https://stackoverflow.com/questions/42620323/">I/O limitations</a> or sending a lot of network requests can <a href="https://www.pingplotter.com/wisdom/article/bandwidth-saturation.html">bandwidth saturation</a>. On the other hand, fetching from databases are alright because they are designed to handle multiple connections and requests via <a href="https://en.wikipedia.org/wiki/Concurrency_control">concurrency control</a>. Thankfully, modern hardware is fast and operating systems are smart.</p>
+<p>This works well for remote work and things that are evaluated asynchronously like reading from disk. But we must be attentive of what resource each function uses. No doubt, both functions use CPU time but the remote work (whose implementation I skipped and instead put a waiting code) will use network resources. At some point, if we use too much of any resource, our program will slow down as well as other processes. For example, reading multiple files from disk concurrently will take more time because of <a href="https://stackoverflow.com/questions/42620323/">I/O limitations</a> or sending a lot of network requests can <a href="https://www.pingplotter.com/wisdom/article/bandwidth-saturation.html">bandwidth saturation</a>. On the other hand, fetching from databases are alright because they are designed to handle multiple connections and requests via <a href="https://en.wikipedia.org/wiki/Concurrency_control">concurrency control</a>.</p>
 <p>Anyways, here's an example with <code>Promise.all</code>, try it on your browser console and the result printed should be 20 after approximately 2 seconds.</p>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="kd">function</span> <span class="nx">awaitLaterWithPromiseAll</span><span class="p">(){</span>
     <span class="c1">// loop over a dummy array and get a list containing 5 promises</span>
