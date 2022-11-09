@@ -1,0 +1,184 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <title>Await when you really need the result
+</title>
+
+
+
+<meta name="tags" content="javascript" />
+<meta name="tags" content="concurrency" />
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Place favicon.ico in the root directory -->
+    <!-- <link rel="stylesheet" href="/static/css/github-pandoc.css"> -->
+    <link rel="stylesheet" href="/static/css/normalize.css">
+    
+    <link rel="stylesheet" href="/static/css/main.css">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-40269231-7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-40269231-7');
+        
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4BFV2FR4WN"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-4BFV2FR4WN');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Pelican" />
+</head>
+
+<body>
+
+    <nav class="monospace">
+        <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/blog.html">Blog</a></li>
+
+
+        </ul>
+    </nav>
+
+
+<section id="content" class="body">
+  <article>
+    <header>
+      <h2 class="entry-title">
+        Await when you really need the result
+      </h2>
+    </header>
+    <footer class="post-info">
+      <div>
+        Posted on 
+        <time class="published" datetime="2022-06-03T13:30:00-05:00">
+          <!-- <a href="/await-when-you-really-need-the-result.html" rel="bookmark" title="Permalink to Await when you really need the result">link</a> -->
+            Fri 03 June 2022
+        </time>
+          (Last updated: 
+          <time class="modified" datetime="2022-11-09T00:43:44.915989-06:00">
+            Wed 09 November 2022
+          </time>)           
+      </div>
+      
+      <!--       <address class="vcard author">
+        By         <a class="url fn" href="/author/shourav-bin-rabbani.html">Shourav Bin Rabbani</a>
+      </address>
+ -->
+      <div class="category">
+        Category: <a href="/category/programming.html">Programming</a>
+      </div>
+      <div class="tags">
+        Tags:
+        <a href="/tag/javascript.html">javascript</a>
+        <a href="/tag/concurrency.html">concurrency</a>
+      </div>
+    </footer><!-- /.post-info -->
+    <div class="entry-content">
+      <p>I am sure you have seen one or two <code>async</code> functions during your javascript hours. While we thank them for their services, we might be extending our program runtimes just by waiting for them blindly.  </p>
+<p>Consider the following scenario: You want to fetch some results from a remote location, but also want to do some "other work" in the meantime, use the return values of both these functions before your program exits. That is, run them concurrently and use the results when ready.  </p>
+<p>Instead of putting <code>await</code> during call, we will put <code>await</code> when we really need the results and finish our "some other work" in the meantime. For the sake of demonstration, we will make two async function and always evaluate "other work" with <code>await</code> to simulate synchronous execution. </p>
+<p>Try copying the following code and running it on your browser console. How much time do you think each function will take and why?</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// returns 3 after 2s of remote work</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">remoteWork</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setTimeout</span><span class="p">(()=&gt;{</span><span class="nx">resolve</span><span class="p">(</span><span class="mf">3</span><span class="p">)},</span><span class="w"> </span><span class="mf">2000</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// returns 5 after 1s of local work</span><span class="w"></span>
+<span class="c1">// we will run this with await to simulate synchronous execution</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">localWork</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setTimeout</span><span class="p">(()=&gt;{</span><span class="nx">resolve</span><span class="p">(</span><span class="mf">5</span><span class="p">)},</span><span class="w"> </span><span class="mf">1000</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">earlyAwait</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">remoteWork</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">localWork</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">y</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">laterAwait</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// async function return a pending promise</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">remoteWork</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">localWork</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">p</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">y</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// helper function to time execution</span><span class="w"></span>
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">timeIt</span><span class="p">(</span><span class="nx">f</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">returnValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">f</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;time taken for&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">f</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;is&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">start</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;ms&#39;</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;return value:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">returnValue</span><span class="p">)</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">await</span><span class="w"> </span><span class="nx">timeIt</span><span class="p">(</span><span class="nx">earlyAwait</span><span class="p">)</span><span class="w"></span>
+<span class="k">await</span><span class="w"> </span><span class="nx">timeIt</span><span class="p">(</span><span class="nx">laterAwait</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>Output:<br>
+<code>time taken for earlyAwait is 3017 ms</code><br>
+<code>return value: 8</code><br>
+<code>time taken for laterAwait is 2011 ms</code><br>
+<code>return value: 8</code>  </p>
+<p>Yes, your intuitions are correct, <code>earlyAwait()</code> will take about 3 seconds to finish whereas <code>laterAwait()</code> will take about 2 seconds. And you know why too.  For <code>earlyAwait()</code>, the program is waiting for the remote work to finish before starting the local work. On the other hand, in <code>laterAwait()</code>, the program only awaits for remote work to finish after finishing local work. This is possible because <code>async</code> functions return pending promises before they are resolved or rejected and we can put <code>await</code> on pending promises.</p>
+<p>With that said, some programs may depend on a lot of remote work and writing await for each is just unacceptable. So we just use <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all">Promise.all</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled">Promise.allSettled</a>. Both of these take a list of pending promises and return a pending promise that is resolved when the list of pending promises are resolved. With that said, <code>Promise.all</code> will return a reject object when any of promises in its list returns a <code>reject</code> object whereas <code>Promise.allSettled</code> will wait for all promises to either <code>resolve</code> or <code>reject</code> before resolving.</p>
+<p>This works well for remote work and things that are evaluated asynchronously like reading from disk. But we must be attentive of what resource each function uses. No doubt, both functions use CPU time but the remote work (whose implementation I skipped and instead put a waiting code) will use network resources. At some point, if we use too much of any resource, our program will slow down as well as other processes. For example, reading multiple files from disk concurrently will take more time because of <a href="https://stackoverflow.com/questions/42620323/">I/O limitations</a> or sending a lot of network requests can <a href="https://www.pingplotter.com/wisdom/article/bandwidth-saturation.html">bandwidth saturation</a>. On the other hand, fetching from databases are alright because they are designed to handle multiple connections and requests via <a href="https://en.wikipedia.org/wiki/Concurrency_control">concurrency control</a>.</p>
+<p>Anyways, here's an example with <code>Promise.all</code>, try it on your browser console and the result printed should be 20 after approximately 2 seconds.</p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">awaitLaterWithPromiseAll</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// loop over a dummy array and get a list containing 5 promises</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">xPromises</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">,</span><span class="mf">4</span><span class="p">,</span><span class="mf">5</span><span class="p">].</span><span class="nx">map</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">remoteWork</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">localWork</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">xList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">all</span><span class="p">(</span><span class="nx">xPromises</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">xSum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">xList</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">sum</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">sum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">xSum</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">y</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="nx">timeIt</span><span class="p">(</span><span class="nx">awaitLaterWithPromiseAll</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+
+<p>Output:<br>
+<code>time taken for awaitLaterWithPromiseAll is 2016 ms</code><br>
+<code>return value: 20</code></p>
+    </div><!-- /.entry-content -->
+  </article>
+</section>
+
+    <footer id="contentinfo" class="body">
+
+<link rel="stylesheet"
+href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/highlight.min.js"></script>
+<script>
+    hljs.configure({
+        languages: ['python','json','javascript']
+    });
+    hljs.highlightAll();
+</script>
+            <address id="about" class="vcard body">
+            Site generated with <a href="https://getpelican.com/">Pelican</a>.
+            </address><!-- /#about -->
+    </footer><!-- /#contentinfo -->
+</body>
+
+</html>
