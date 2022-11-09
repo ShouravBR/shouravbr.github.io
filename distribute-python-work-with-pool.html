@@ -72,7 +72,7 @@
             Sat 12 June 2021
         </time>
           (Last updated: 
-          <time class="modified" datetime="2022-11-09T00:53:44.563396-06:00">
+          <time class="modified" datetime="2022-11-09T00:57:05.718511-06:00">
             Wed 09 November 2022
           </time>)           
       </div>
@@ -92,8 +92,8 @@
     </footer><!-- /.post-info -->
     <div class="entry-content">
       <p>The multiprocessing <code>Pool</code> class makes it easy to achieve parallel execution. More details can be found in the official Python documentation <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>, which is an excellent source that everyone should at least skim through. The <code>Pool</code> class manages your worker process and makes it easy distribute workload. This post shows you how use the <code>Pool</code> in a module, import it and invoke it from our "main" function. But you can just implement it without classes as shown in the Python documentation. </p>
-<p>Suppose, we have to run a function, say, get the squares ($f(x) = x^2)$, for every elements in an array of length $N$. However, $N$ is large and executing it sequentially will take $T$ time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by $T/2$ (give or take).</p>
-<p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function $f$ as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.imap</code>. In cases where we want to store the return values and handle them later, we will use <code>Pool.map</code>. There are many methods provided in the <code>Pool</code> class for different type of management and can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
+<p>Suppose, we have to run a function, say, get the squares (<span class="math">\(f(x) = x^2)\)</span>, for every elements in an array of length <span class="math">\(N\)</span>. However, <span class="math">\(N\)</span> is large and executing it sequentially will take <span class="math">\(T\)</span> time, which is a long time. Thankfully, you have a modern computer that uses a multi-core processor, say 2 cores, and so you can run the function in parallel. If we run process two numbers in parallel, we essentially reduce the time taken by <span class="math">\(T/2\)</span> (give or take).</p>
+<p>For that, we first write a class called "Workers", which uses the <code>Pool</code> class and implement the function <span class="math">\(f\)</span> as a <code>@staticmethod</code> [<a href="https://docs.python.org/3/library/functions.html?highlight=staticmethod#staticmethod">2</a>] because we want to access this function without creating an instance. If you do not want to use <code>@staticmethod</code> decorator, you can move the function defination to outside of the class. Second, we use <code>Pool.imap_unordered</code> since the order of output does not matter and we can process the output as soon as it is available. If order is important, we can use <code>Pool.imap</code>. In cases where we want to store the return values and handle them later, we will use <code>Pool.map</code>. There are many methods provided in the <code>Pool</code> class for different type of management and can be found in the Python Docs <a href="https://docs.python.org/3/library/multiprocessing.html">[1]</a>. Finally, we save the class as "Worker.py".</p>
 <p>Here's the code:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">## saved as Worker.py</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
@@ -131,6 +131,69 @@
 <span class="mf">9</span><span class="w"></span>
 <span class="mf">16</span><span class="w"></span>
 </code></pre></div>
+
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
     </div><!-- /.entry-content -->
   </article>
 </section>
@@ -150,8 +213,6 @@ href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.0.1/styles/default.min.cs
             Site generated with <a href="https://getpelican.com/">Pelican</a>.
             </address><!-- /#about -->
     </footer><!-- /#contentinfo -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </body>
 
 </html>
